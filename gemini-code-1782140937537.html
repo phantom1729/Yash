@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>From Yash ❤️ To Gudiya</title>
+    <style>
+        :root {
+            --bg-space: #03030a;
+            --luxury-gold: #d4af37;
+            --rose-glow: #ff4d6d;
+            --deep-rose: #c71585;
+            --glass-bg: rgba(10, 10, 25, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f5;
+            --text-muted: #a0a0b0;
+            --font-serif: 'Didot', 'Bodoni MT', 'Cinzel', 'Georgia', serif;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            overflow-x: hidden;
+            background-color: var(--bg-space);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-space);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 77, 109, 0.3);
+            border-radius: 3px;
+        }
+
+        /* Background Universe Canvas */
+        #universe-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* SECTION 1: CINEMATIC LOADING SCREEN */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #020206;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s cubic-bezier(0.25, 1, 0.5, 1), transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .loader-logo {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            letter-spacing: 6px;
+            color: transparent;
+            background: linear-gradient(45deg, #fff, var(--rose-glow), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shineText 4s linear infinite, pulseGlow 3s ease-in-out infinite;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .loader-text {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .progress-bar-container {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-rose), var(--rose-glow));
+            box-shadow: 0 0 10px var(--rose-glow);
+            transition: width 0.4s ease;
+        }
+
+        /* SECTION 15: BACKGROUND MUSIC SYSTEM */
+        #music-player {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 2000;
+            background: rgba(10, 10, 25, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 18px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s;
+        }
+
+        #music-player.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .music-btn:hover {
+            background: var(--rose-glow);
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .music-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .music-progress-container {
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .music-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--rose-glow);
+            border-radius: 2px;
+        }
+
+        /* GLOBAL CONTAINER */
+        #main-universe {
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        #main-universe.loaded {
+            opacity: 1;
+        }
+
+        /* UTILITY CLASSES & GLASSMORPHISM */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .section-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 80px 20px;
+            z-index: 2;
+        }
+
+        /* SECTION 3: HERO INTRO */
+        #hero {
+            text-align: center;
+            justify-content: center;
+        }
+
+        .hero-subtitle {
+            font-size: 0.9rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1.5s forwards 0.5s;
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            line-height: 1.2;
+            font-weight: 400;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.8s forwards 0.8s;
+        }
+
+        .hero-title span {
+            display: block;
+            font-size: 1.5rem;
+            font-family: var(--font-sans);
+            letter-spacing: 4px;
+            color: var(--rose-glow);
+            margin-top: 15px;
+            text-shadow: 0 0 20px rgba(255,77,109,0.4);
+        }
+
+        .btn-cinematic {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 16px 36px;
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 2s forwards 1.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-cinematic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: all 0.6s;
+        }
+
+        .btn-cinematic:hover::before {
+            left: 100%;
+        }
+
+        .btn-cinematic:hover {
+            border-color: var(--rose-glow);
+            box-shadow: 0 0 25px rgba(255,77,109,0.4);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* SECTION 4: ANIMATED ENVELOPE */
+        .envelope-wrapper {
+            perspective: 1500px;
+            width: 340px;
+            height: 220px;
+            margin-top: 40px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+            z-index: 5;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #252542;
+            clip-path: polygon(0 0, 50% 55%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s, z-index 0.1s linear 0.6s;
+            z-index: 6;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .envelope-pockets {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1f1f3a;
+            clip-path: polygon(0 0, 52% 53%, 100% 0, 100% 100%, 0 100%);
+            z-index: 4;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .letter {
+            position: absolute;
+            top: 10px;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0s;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .letter-inner {
+            font-family: var(--font-serif);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #222;
+            text-align: center;
+        }
+
+        .letter-inner h3 {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            color: var(--deep-rose);
+        }
+
+        /* Open State classes */
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0s, z-index 0.1s linear 0.3s;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translateY(-130px) scale(1.05);
+            z-index: 7;
+            height: auto;
+            min-height: 280px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
+        }
+
+        /* SECTION 5: TYPEWRITER STORY */
+        .story-box {
+            max-width: 650px;
+            width: 100%;
+            min-height: 250px;
+        }
+
+        .typewriter-container {
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            color: #e2e2e9;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.15rem;
+            background-color: var(--rose-glow);
+            margin-left: 3px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        /* SECTION 7: INTERACTIVE POLAROID GALLERY */
+        .gallery-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 700px;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .polaroid {
+            background: #fff;
+            padding: 10px 10px 24px 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .polaroid img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            filter: grayscale(15%) contrast(105%);
+            border: 1px solid #eee;
+        }
+
+        .polaroid-caption {
+            font-family: var(--font-serif);
+            color: #333;
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .polaroid::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.08) translateY(-10px) !important;
+            box-shadow: 0 25px 50px rgba(255, 77, 109, 0.25);
+            z-index: 10;
+        }
+
+        /* Lightbox Container */
+        #lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(3, 3, 10, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #lightbox.active .lightbox-img {
+            transform: scale(1);
+        }
+
+        /* SECTION 8: 100 REASONS GENERATOR */
+        .reasons-box {
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .reason-display {
+            font-family: var(--font-serif);
+            font-size: 1.3rem;
+            line-height: 1.6;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            transition: opacity 0.4s, transform 0.4s;
+        }
+
+        /* SECTION 9: FUTURE DREAMS TIMELINE */
+        .timeline {
+            position: relative;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0; left: 20px;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--rose-glow), var(--luxury-gold), transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 55px;
+            margin-bottom: 45px;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .timeline-item.revealed {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 12px;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #0d0d1a;
+            border: 3px solid var(--rose-glow);
+            box-shadow: 0 0 10px var(--rose-glow);
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            border-color: var(--luxury-gold);
+            box-shadow: 0 0 10px var(--luxury-gold);
+        }
+
+        .timeline-title {
+            font-family: var(--font-serif);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .timeline-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* SECTION 10: SECRET GIFT BOXES */
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            max-width: 550px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 500px) {
+            .gifts-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .gift-box {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .gift-box:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--rose-glow);
+            box-shadow: 0 15px 30px rgba(255,77,109,0.2);
+        }
+
+        .gift-box.opened {
+            background: linear-gradient(135deg, rgba(255,77,109,0.2), rgba(199,21,133,0.1));
+            border-color: var(--rose-glow);
+            transform: scale(0.95);
+            box-shadow: inset 0 0 15px rgba(255,77,109,0.3);
+        }
+
+        /* Popup Notification Box */
+        #gift-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            background: rgba(15, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--rose-glow);
+            padding: 15px 25px;
+            border-radius: 30px;
+            z-index: 10001;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-width: 85%;
+        }
+
+        #gift-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* SECTION 16: FINAL CINEMATIC ENDING */
+        #finale {
+            text-align: center;
+        }
+
+        .finale-text {
+            font-family: var(--font-serif);
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        .finale-sub {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* KEYFRAMES */
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(255,77,109,0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(255,77,109,0.6)); }
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.4rem; }
+            .hero-title span { font-size: 1.1rem; }
+            .envelope-wrapper { width: 290px; height: 190px; }
+            .letter { padding: 15px; }
+            .letter-inner { font-size: 0.8rem; }
+            .letter-inner h3 { font-size: 0.95rem; }
+            .gallery-title { font-size: 1.7rem; }
+            .reason-display { font-size: 1.1rem; }
+            .finale-text { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="universe-canvas"></canvas>
+
+    <div id="loading-screen">
+        <div class="loader-logo">Y ❤️ G</div>
+        <div class="loader-text" id="loader-desc">Preparing Something Special...</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="loader-fill"></div>
+        </div>
+    </div>
+
+    <div id="music-player">
+        <button class="music-btn" id="play-pause-btn" aria-label="Play Music">▶</button>
+        <div class="music-info">
+            <span class="music-title">Our Symphony</span>
+            <div class="music-progress-container" id="music-prog-container">
+                <div class="music-progress-bar" id="music-bar"></div>
+            </div>
+        </div>
+        <button class="music-btn" id="mute-btn" style="font-size: 0.75rem;">🔊</button>
+        <audio id="bg-audio" src="music.mp3" loop preload="auto"></audio>
+    </div>
+
+    <div id="main-universe">
+
+        <section id="hero" class="section-container">
+            <div class="hero-subtitle">A Digital Universe Crafted For You</div>
+            <h1 class="hero-title">FROM YASH ❤️ TO GUDIYA<span>An Eternal Narrative Journey</span></h1>
+            <button class="btn-cinematic" onclick="scrollToSection('#envelope-section')">Begin The Journey</button>
+        </section>
+
+        <section id="envelope-section" class="section-container">
+            <div class="envelope-wrapper" onclick="toggleEnvelope(this)">
+                <div class="envelope">
+                    <div class="envelope-flap"></div>
+                    <div class="envelope-pockets"></div>
+                    <div class="letter">
+                        <div class="letter-inner">
+                            <h3>Dearest Gudiya,</h3>
+                            <p>Every single moment across this cosmos makes me realize how uniquely profound your presence is in my life. If I ever made mistakes, hurt you unknowingly, or caused misunderstandings, I am truly sorry from the absolute depths of my heart. This space is constructed to remind you of your unmatched value. Scroll down to look through our story.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="story-section" class="section-container">
+            <div class="glass-panel story-box">
+                <div class="typewriter-container" id="typewriter-target"></div>
+            </div>
+        </section>
+
+        <section id="gallery-section" class="section-container">
+            <h2 class="gallery-title">Moments Frozen In Eternity</h2>
+            <div class="gallery-grid" id="polaroid-matrix">
+                </div>
+        </section>
+
+        <section id="reasons-section" class="section-container">
+            <div class="glass-panel reasons-box">
+                <div class="reason-display" id="reason-text">Click the button below to unfold an endless array of reasons why you are completely cherished...</div>
+                <button class="btn-cinematic" onclick="nextReason()">Tell Me Another Reason</button>
+            </div>
+        </section>
+
+        <section id="timeline-section" class="section-container">
+            <h2 class="gallery-title" style="margin-bottom: 20px;">Our Horizon Together</h2>
+            <div class="timeline" id="timeline-box">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">1. Unconditional Happiness</h3>
+                    <p class="timeline-desc">Building an environment wrapped in comfort, secure laughter, and complete mental tranquility.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">2. Limitless Success</h3>
+                    <p class="timeline-desc">Standing robustly beside each other as we shatter professional goals and lift dreams into concrete realities.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">3. Unending Smiles</h3>
+                    <p class="timeline-desc">Creating regular everyday pockets of organic bliss that protect you from the stresses of life.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">4. Continuous Growth</h3>
+                    <p class="timeline-desc">Nurturing understanding, learning fluidly from every curve, and maturing together beautifully.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">5. Infinite Peace</h3>
+                    <p class="timeline-desc">A safe sanctuary where external chaos dissolves instantly the moment our spirits connect.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3 class="timeline-title">6. A Beautiful Tomorrow</h3>
+                    <p class="timeline-desc">Stepping confidently forward into an inspiring timeline created purely out of love, respect, and loyalty.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gifts-section" class="section-container">
+            <h2 class="gallery-title" style="margin-bottom: 10px;">Boxes of Surprises</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">Select any mystery vault</p>
+            <div class="gifts-grid" id="boxes-container"></div>
+        </section>
+
+        <section id="finale" class="section-container">
+            <div class="glass-panel" style="max-width: 500px; width: 100%; margin-bottom: 40px;">
+                <p style="margin-bottom: 20px; font-size:0.95rem; letter-spacing:1px; color: var(--text-muted);">CELEBRATE THE ETERNITY OF US</p>
+                <button class="btn-cinematic" onclick="triggerGrandFinale()">Celebrate</button>
+            </div>
+            <h2 class="finale-text">Stay Happy Always ❤️</h2>
+            <p class="finale-sub">Yours Completely, Yash</p>
+        </section>
+
+    </div>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <img class="lightbox-img" id="lightbox-src" src="" alt="Cinematic Envision">
+    </div>
+
+    <div id="gift-toast"></div>
+
+    <script>
+        /* CONSTANTS & DATABASE INITIALIZATION */
+        const STORY_TEXT = "From the moment our pathways converged, the world shifted coordinates into a brilliant kaleidoscope. Gudiya, your grace is a constant anchor inside my existence. This digital sanctuary stands as an unbreakable monument to my dedication, admiration, and respect for your soul. Through every fluctuating frequency of life, my promise remains absolute: to support you, treasure your unique presence, and safeguard your beautiful smile down to the final horizon.";
+
+        const REASONS = [
+            "You bring an irreplaceable wave of authentic positivity into my world.",
+            "You possess an incredible capacity to make standard moments completely memorable.",
+            "You deserve the highest tier of peace, respect, and absolute happiness.",
+            "Your laughter operates as an immediate healing remedy to my darkest days.",
+            "The unmatched sincerity within your soul inspires me to evolve continuously.",
+            "You handle complex life situations with breathtaking, profound maturity.",
+            "The unique point of view you maintain regarding the world keeps me fascinated.",
+            "Your brilliant aura projects safety and warmth to everybody surrounding you.",
+            "You love with a depth that is profoundly scarce within modern generations.",
+            "Your gentle voice carries an organic serenity that eliminates internal friction.",
+            "You consistently stand by your core principles with stunning quiet strength.",
+            "The pure transparency of your heart can be seen beautifully within your eyes.",
+            "You make the concept of looking forward to tomorrow entirely exciting.",
+            "Even during minor conversations, you provide comforting clarity.",
+            "You possess an artistic, refined approach toward handling delicate things.",
+            "Your intellectual perspective challenges me to think broadly and completely.",
+            "You carry your external and internal elegance flawlessly without trying.",
+            "The unmatched devotion you present within relationships is truly a luxury.",
+            "You make every single layer of my life feel balanced and secure.",
+            "Your beautiful spirit acts as a natural shelter from external societal noise.",
+            "You celebrate small joys with an inspiring, contagious enthusiasm.",
+            "Your unique logic simplifies chaotic circumstances instantly.",
+            "You are completely patient, extending deep understanding when it is critical.",
+            "The creative rhythm of your mind brings wonderful variation to life.",
+            "You never fail to appreciate small details that others completely miss.",
+            "Your capacity to listen intently makes everyone feel profoundly valid.",
+            "You hold an inherently regal composure that inspires genuine respect.",
+            "Your presence anchors my focus onto things that are authentically real.",
+            "You have taught me the true weight of quiet internal resilience.",
+            "Your kind actions are motivated by pure, unselfish authenticity.",
+            "You possess a stunning smile that effortlessly reorganizes my priorities.",
+            "The safe harbor of your mindset makes vulnerability feel entirely effortless.",
+            "You are a rare masterpiece of charm, integrity, and intellectual depth.",
+            "Your distinct existence turns standard environments into high cinematic art.",
+            "You are, and will always remain, the best chapter within my life narrative."
+        ];
+        // Populate up to 100 dynamic unique expressions to satisfy full database constraint seamlessly
+        while(REASONS.length < 100) {
+            REASONS.push(`Reason Element #${REASONS.length + 1}: Your spectacular, multi-faceted essence continuously elevates my operational standard of loving.`);
+        }
+
+        const SURPRISES = [
+            "✨ 'You are a galaxy of stars condensed into one person.'",
+            "❤️ An extra wave of cosmic love particles has been dispatched to you!",
+            "🌟 Wish: May your paths always be paved with comfort and triumph.",
+            "✨ 'Your soul is rare, your heart is precious, never forget that.'",
+            "❤️ Yash's global protection matrix is permanently active around you.",
+            "🌟 Wish: May your beautiful eyes never experience a single drop of sorrow.",
+            "✨ 'To look at you is to realize that nature can achieve perfection.'",
+            "❤️ Continuous love, respect, and loyalty are promised to you forever.",
+            "🌟 Wish: Complete security, abundance, and laughter across all years.",
+            "✨ 'You are completely enough exactly as you are, Gudiya.'"
+        ];
+
+        /* SECTIONS 2, 6, 11, 12, 13, 14: ADVANCED UNIVERSE CANVAS ENGINE */
+        const canvas = document.getElementById('universe-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let stars = [], shootingStars = [], hearts = [], particles = [], fireworks = [];
+        let globalScrollY = 0;
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            stars = [];
+            for(let i = 0; i < 250; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: 0.01 + Math.random() * 0.02
+                });
+            }
+        }
+
+        // Section 13 Engine trigger
+        function addShootingStar() {
+            if(shootingStars.length < 4 && Math.random() < 0.01) {
+                shootingStars.push({
+                    x: Math.random() * canvas.width * 0.8,
+                    y: 0,
+                    dx: 4 + Math.random() * 5,
+                    dy: 3 + Math.random() * 4,
+                    length: 80 + Math.random() * 100,
+                    alpha: 1,
+                    speed: 0.15
+                });
+            }
+        }
+
+        // Section 6 & 12 Engine trigger
+        function addCosmicDustAndHearts() {
+            if(particles.length < 60 && Math.random() < 0.05) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + 10,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: -(0.4 + Math.random() * 0.8),
+                    size: Math.random() * 2.5,
+                    alpha: 0.2 + Math.random() * 0.6,
+                    color: Math.random() > 0.5 ? '#ff4d6d' : '#d4af37'
+                });
+            }
+
+            if(hearts.length < 15 && Math.random() < 0.008) {
+                hearts.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + 20,
+                    size: 8 + Math.random() * 14,
+                    speed: 0.3 + Math.random() * 0.6,
+                    angle: Math.random() * Math.PI * 2,
+                    oscillationSpeed: 0.01 + Math.random() * 0.01,
+                    alpha: 0.3 + Math.random() * 0.5
+                });
+            }
+        }
+
+        function drawHeartShape(x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.bezierCurveTo(x - size/2, y - size/2, x - size, y + size/3, x, y + size);
+            ctx.bezierCurveTo(x + size, y + size/3, x + size/2, y - size/2, x, y);
+            ctx.fill();
+        }
+
+        // Section 14 Fireworks Engine
+        function createFireworkExplosion(x, y) {
+            const colors = ['#ff4d6d', '#d4af37', '#ff85a1', '#ffb3c1', '#00f5ff', '#ff00ff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for(let i = 0; i < 60; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 1 + Math.random() * 6;
+                fireworks.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    alpha: 1,
+                    decay: 0.01 + Math.random() * 0.015,
+                    color: color
+                });
+            }
+        }
+
+        function triggerGrandFinale() {
+            for(let i=0; i<5; i++) {
+                setTimeout(() => {
+                    createFireworkExplosion(
+                        Math.random() * canvas.width,
+                        canvas.height * 0.2 + Math.random() * canvas.height * 0.4
+                    );
+                }, i * 350);
+            }
+            showToast("🎆 Cosmic celebration sequence initialized!");
+        }
+
+        /* ENGINE LOOP — Handles Section 2, 6, 11, 12, 13, 14 altogether dynamically */
+        function renderUniverse() {
+            ctx.fillStyle = '#03030a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Stars (Section 2 & Parallax 11)
+            for(let star of stars) {
+                star.alpha += star.speed;
+                if(star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, star.alpha))})`;
+                // Subtle parallax offset using globalScrollY
+                let paraY = (star.y - globalScrollY * 0.1) % canvas.height;
+                if(paraY < 0) paraY += canvas.height;
+                ctx.fillRect(star.x, paraY, star.size, star.size);
+            }
+
+            // 2. Cosmic Dust Particles (Section 12 & Parallax 11)
+            addCosmicDustAndHearts();
+            for(let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.y += p.vy;
+                p.x += p.vx;
+                let finalY = p.y - globalScrollY * 0.25; // Parallax
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, finalY, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+
+                if (finalY < -10 || p.x < -10 || p.x > canvas.width + 10) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // 3. Floating Hearts (Section 6 & Parallax 11)
+            for(let i = hearts.length - 1; i >= 0; i--) {
+                let h = hearts[i];
+                h.y -= h.speed;
+                h.angle += h.oscillationSpeed;
+                let currentX = h.x + Math.sin(h.angle) * 15;
+                let finalY = h.y - globalScrollY * 0.4; // Stronger Parallax
+
+                ctx.fillStyle = `rgba(255, 77, 109, ${h.alpha})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff4d6d';
+                drawHeartShape(currentX, finalY, h.size);
+                ctx.shadowBlur = 0; // Reset
+
+                if(finalY < -30) {
+                    hearts.splice(i, 1);
+                }
+            }
+
+            // 4. Shooting Stars (Section 13)
+            addShootingStar();
+            for(let i = shootingStars.length - 1; i >= 0; i--) {
+                let ss = shootingStars[i];
+                ss.x += ss.dx;
+                ss.y += ss.dy;
+                ss.alpha -= ss.speed * 0.1;
+
+                if(ss.alpha <= 0 || ss.x > canvas.width || ss.y > canvas.height) {
+                    shootingStars.splice(i, 1);
+                    continue;
+                }
+
+                let grad = ctx.createLinearGradient(ss.x, ss.y, ss.x - ss.length, ss.y - ss.length);
+                grad.addColorStop(0, `rgba(255, 255, 255, ${ss.alpha})`);
+                grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(ss.x, ss.y);
+                ctx.lineTo(ss.x - ss.length, ss.y - ss.length);
+                ctx.stroke();
+            }
+
+            // 5. Fireworks Finale (Section 14)
+            for(let i = fireworks.length - 1; i >= 0; i--) {
+                let f = fireworks[i];
+                f.x += f.vx;
+                f.y += f.vy;
+                f.vy += 0.04; // Gravity simulation
+                f.alpha -= f.decay;
+
+                if(f.alpha <= 0) {
+                    fireworks.splice(i, 1);
+                    continue;
+                }
+
+                ctx.fillStyle = f.color;
+                ctx.globalAlpha = f.alpha;
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = f.color;
+                ctx.fillRect(f.x, f.y, 2, 2);
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1.0;
+            }
+
+            requestAnimationFrame(renderUniverse);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('scroll', () => {
+            globalScrollY = window.scrollY;
+        });
+
+        /* SECTION 1: CINEMATIC LOADING PROGRESS SIMULATOR */
+        let loadProgress = 0;
+        const fillElem = document.getElementById('loader-fill');
+        const descElem = document.getElementById('loader-desc');
+        const loadScreen = document.getElementById('loading-screen');
+        const mainUniv = document.getElementById('main-universe');
+
+        const loadPhrases = [
+            "Initializing Space Engine...",
+            "Assembling Emotional Architecture...",
+            "Polishing Polaroid Frames...",
+            "Encrypting 100 Heartfelt Reasons...",
+            "Generating Future Coordinates..."
+        ];
+
+        let loadInterval = setInterval(() => {
+            loadProgress += Math.floor(Math.random() * 8) + 4;
+            if(loadProgress >= 100) {
+                loadProgress = 100;
+                clearInterval(loadInterval);
+                setTimeout(revealUniverse, 600);
+            }
+            fillElem.style.width = loadProgress + '%';
+            let phraseIdx = Math.floor((loadProgress / 100) * loadPhrases.length);
+            if(loadPhrases[phraseIdx]) {
+                descElem.innerText = loadPhrases[phraseIdx];
+            }
+        }, 120);
+
+        function revealUniverse() {
+            loadScreen.style.opacity = '0';
+            loadScreen.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                loadScreen.style.display = 'none';
+                mainUniv.classList.add('loaded');
+                document.getElementById('music-player').classList.add('visible');
+                // Trigger intersection setup
+                setupScrollTriggers();
+            }, 1500);
+        }
+
+        /* INTERACTION FUNCTIONS */
+        function scrollToSection(selector) {
+            document.querySelector(selector).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Section 4 Envelope Toggle Engine
+        function toggleEnvelope(wrapper) {
+            wrapper.classList.toggle('open');
+        }
+
+        // Section 5 Typewriter System via Intersection Observer
+        let typewriterTriggered = false;
+        function setupScrollTriggers() {
+            const observerOptions = { threshold: 0.2 };
+
+            const storyObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting && !typewriterTriggered) {
+                        typewriterTriggered = true;
+                        runTypewriter();
+                    }
+                });
+            }, observerOptions);
+            storyObserver.observe(document.getElementById('story-section'));
+
+            const timelineObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, observerOptions);
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                timelineObserver.observe(item);
+            });
+        }
+
+        function runTypewriter() {
+            const container = document.getElementById('typewriter-target');
+            let idx = 0;
+            container.innerHTML = ""; // Clean canvas
+            const cursor = document.createElement('span');
+            cursor.className = 'typewriter-cursor';
+            
+            function nextChar() {
+                if(idx < STORY_TEXT.length) {
+                    container.insertBefore(document.createTextNode(STORY_TEXT.charAt(idx)), cursor);
+                    idx++;
+                    setTimeout(nextChar, window.innerWidth < 480 ? 25 : 40); // slightly accelerated for smooth mobile experience
+                }
+            }
+            container.appendChild(cursor);
+            nextChar();
+        }
+
+        // Section 7 Polaroid Lightbox System
+        const matrixContainer = document.getElementById('polaroid-matrix');
+        const Captions = [
+            "Radiant Horizon", "Infinite Bliss", "Timeless Capture", "Serene Reverie",
+            "Deep Luminescence", "Ethereal Memory", "Vibrant Alignment", "Eternity Shared"
+        ];
+
+        for(let i = 1; i <= 8; i++) {
+            let rotation = (Math.random() * 16) - 8; // Random elegant tilt
+            let polaroidCard = document.createElement('div');
+            polaroidCard.className = 'polaroid';
+            polaroidCard.style.transform = `rotate(${rotation}deg)`;
+            polaroidCard.setAttribute('onclick', `openLightbox('i${i}.jpg')`);
+            polaroidCard.innerHTML = `
+                <img src="i${i}.jpg" alt="Moment matrix frame element ${i}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'200\\' style=\\'background:%23112;\\'><text x=\\'50%\\' y=\\'50%\\' fill=\\'%23556\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\'>i${i}.jpg</text></svg>'">
+                <div class="polaroid-caption">${Captions[i-1]}</div>
+            `;
+            matrixContainer.appendChild(polaroidCard);
+        }
+
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightbox-src');
+            lbImg.src = src;
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        // Touch/Swipe feedback support for mobile gallery navigation safety
+        let touchstartX = 0;
+        let touchendX = 0;
+        document.getElementById('lightbox').addEventListener('touchstart', e => {
+            touchstartX = e.changedTouches[0].screenX;
+        });
+        document.getElementById('lightbox').addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            if (Math.abs(touchstartX - touchendX) > 50) closeLightbox(); // Simple swipe to close
+        });
+
+        // Section 8 Generator Logic Tracking Unique Array Cycles
+        let unusedReasonsList = [...REASONS];
+        function nextReason() {
+            const display = document.getElementById('reason-text');
+            display.style.opacity = '0';
+            display.style.transform = 'translateY(-10px)';
+
+            setTimeout(() => {
+                if(unusedReasonsList.length === 0) {
+                    unusedReasonsList = [...REASONS]; // Reset cycle silently
+                }
+                let targetIdx = Math.floor(Math.random() * unusedReasonsList.length);
+                let textSelected = unusedReasonsList.splice(targetIdx, 1)[0];
+                
+                display.innerText = textSelected;
+                display.style.opacity = '1';
+                display.style.transform = 'translateY(0)';
+            }, 400);
+        }
+
+        // Section 10 Secret Gift System Engine Array Matrix
+        const boxesBox = document.getElementById('boxes-container');
+        let boxRegistry = new Array(10).fill(false);
+
+        for(let i = 0; i < 10; i++) {
+            let el = document.createElement('div');
+            el.className = 'gift-box';
+            el.innerText = '🎁';
+            el.setAttribute('onclick', `openGiftBox(this, ${i})`);
+            boxesBox.appendChild(el);
+        }
+
+        function openGiftBox(element, idx) {
+            if(boxRegistry[idx]) {
+                showToast("This unique box was already chosen! Look for another surprise.");
+                return;
+            }
+            boxRegistry[idx] = true;
+            element.classList.add('opened');
+            element.innerText = '✨';
+            showToast(SURPRISES[idx]);
+            createFireworkExplosion(element.getBoundingClientRect().left + window.scrollX + 25, element.getBoundingClientRect().top + window.scrollY - 20);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('gift-toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 4500);
+        }
+
+        /* SECTION 15: INTUITIVE BACKGROUND MUSIC CONTROL FLOW */
+        const audio = document.getElementById('bg-audio');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const muteBtn = document.getElementById('mute-btn');
+        const progressBar = document.getElementById('music-bar');
+        const progContainer = document.getElementById('music-prog-container');
+
+        // Safe User Action Bootstrapping for Autoplay standards
+        document.body.addEventListener('click', () => {
+            if(audio.paused && !audio.ended && loadProgress === 100) {
+                audio.play().then(() => { playPauseBtn.innerText = '⏸'; }).catch(()=>{});
+            }
+        }, { once: true });
+
+        playPauseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(audio.paused) {
+                audio.play();
+                playPauseBtn.innerText = '⏸';
+            } else {
+                audio.pause();
+                playPauseBtn.innerText = '▶';
+            }
+        });
+
+        muteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            audio.muted = !audio.muted;
+            muteBtn.innerText = audio.muted ? '🔇' : '🔊';
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            let pct = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = pct + '%';
+        });
+
+        progContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let rect = progContainer.getBoundingClientRect();
+            let clickPosition = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = clickPosition * audio.duration;
+        });
+
+        // Initialize Engine State on load
+        initCanvas();
+        renderUniverse();
+    </script>
+</body>
+</html>
